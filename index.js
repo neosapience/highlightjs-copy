@@ -15,18 +15,25 @@ class CopyButtonPlugin {
    * @param {Hook} [options.hook]
    * @param {String} [options.lang] Defaults to the document body's lang attribute and falls back to "en"
    */
+
+  // https://github.com/arronhunt/highlightjs-copy/pull/24
   constructor(options = {}) {
-    self.hook = options.hook;
-    self.callback = options.callback;
-    self.lang = options.lang || document.documentElement.lang || "en";
+    this.hook = options.hook;
+    this.callback = options.callback;
+    this.lang = options.lang || document.documentElement.lang || "en";
+    this.autohide =
+      typeof options.autohide !== "undefined" ? options.autohide : true;
   }
   "after:highlightElement"({ el, text }) {
+    let { hook, callback, lang, autohide } = this;
+
     // Create the copy button and append it to the codeblock.
     let button = Object.assign(document.createElement("button"), {
       innerHTML: locales[lang]?.[0] || "Copy",
       className: "hljs-copy-button",
     });
     button.dataset.copied = false;
+    button.dataset.autohide = autohide;
     el.parentElement.classList.add("hljs-copy-wrapper");
     el.parentElement.appendChild(button);
 
